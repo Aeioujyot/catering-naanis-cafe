@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naani's Catering - Digital Quote Builder</title>
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .dropdown-suggestions { max-height: 280px; overflow-y: auto; }
+        /* Custom Theme Overrides for strict Brand Compliance */
+        .bg-navy-dark { background-color: #0B192C; }
+        .bg-navy-light { background-color: #1E3E62; }
+        .text-gold { color: #D4AF37; }
+        .bg-gold { background-color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        .hover-gold:hover { background-color: #AA8B2C; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+
+    <!-- Premium Header / Logo Banner -->
+    <header class="bg-navy-dark text-white py-10 px-4 border-b-4 border-gold text-center shadow-md">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <!-- Simulated High-End Logo Badge -->
+            <div class="w-20 h-20 bg-navy-light border-2 border-gold rounded-full flex items-center justify-center shadow-inner mb-4">
+                <span class="text-gold font-serif text-3xl font-black tracking-wider">N</span>
+            </div>
+            <h1 class="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-gold">NAANI'S CATERING</h1>
+            <div class="w-24 h-0.5 bg-gold my-3 opacity-70"></div>
+            <p class="text-slate-300 max-w-xl text-sm sm:text-base font-light italic leading-relaxed">
+                Premium Traditional Catering & Event Specialties
+            </p>
+            <p class="text-slate-400 text-xs mt-2 font-mono uppercase tracking-widest">
+                Interactive Quote Generation Packet
+            </p>
+        </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Panel: Menu Item Picker Matrix -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-navy-dark mb-4 border-b border-slate-100 pb-2">Select Catering Items</h2>
+                    
+                    <!-- View Configuration Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <!-- Option 1: Instant Intelligent Search -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Instant Search</label>
+                            <input type="text" id="search-input" placeholder="Type dish name (e.g., Biryani, Paneer)..." 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-navy-light transition text-sm">
+                        </div>
+
+                        <!-- Option 2: All Items Structural Dropdown List -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Browse Entire Menu</label>
+                            <select id="menu-dropdown" onchange="handleDropdownSelect(this.value)"
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-navy-light transition text-sm">
+                                <option value="">-- Choose an item from the packet --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Suggestions Overlay for Search Input -->
+                    <div class="relative">
+                        <div id="suggestions" class="dropdown-suggestions absolute left-0 right-0 -mt-4 bg-white border border-slate-200 rounded-xl shadow-xl hidden z-50"></div>
+                    </div>
+
+                    <!-- Client Document Table View -->
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Selected Tray Configurations</h3>
+                    <div id="quote-items-container" class="space-y-3">
+                        <p id="empty-state" class="text-slate-400 text-sm italic py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                            Your selections are empty. Use the search box or browse the menu drop-down menu above to append items to your quote document.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Fixed Calculation Ledger -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit lg:sticky lg:top-6">
+                <h2 class="text-xl font-bold text-navy-dark mb-4 border-b border-slate-100 pb-2">Quote Summary</h2>
+                
+                <div class="space-y-3 text-sm mb-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500">Cumulative Tray Units</span>
+                        <span id="summary-count" class="font-bold text-navy-dark">0</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-slate-500">Subtotal</span>
+                        <span id="summary-subtotal" class="font-semibold text-slate-700">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500">Sales Tax (Naperville - 8.75%)</span>
+                        <span id="summary-tax" class="font-semibold text-slate-700">$0.00</span>
+                    </div>
+                    <hr class="border-slate-100">
+                    <div class="flex justify-between items-baseline pt-2">
+                        <span class="text-base font-bold text-navy-dark">Estimated Total</span>
+                        <span id="summary-total" class="text-3xl font-black text-navy-dark">$0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="window.print()" class="w-full py-3 bg-gold text-navy-dark font-bold text-sm tracking-wider uppercase rounded-xl hover-gold transition shadow-md cursor-pointer text-center">
+                    Print or Save Quote PDF
+                </button>
+                <p class="text-[10px] text-center text-slate-400 mt-3 leading-snug">
+                    * Final order configuration prices are governed strictly by standard dish allocation capacity metrics.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Client Application Logic Architecture -->
+    <script>
+        const MENU_DATA = {
+            "punugulu": {name: "Punugulu", category: "Vegetarian Appetizers", half: 60.0},
+            "cut mirchi": {name: "Cut Mirchi", category: "Vegetarian Appetizers", half: 70.0},
+            "onion pakora": {name: "Onion Pakora", category: "Vegetarian Appetizers", half: 65.0},
+            "veg pakora": {name: "Veg Pakora", category: "Vegetarian Appetizers", half: 65.0},
+            "gobi manchurian": {name: "Gobi Manchurian", category: "Vegetarian Appetizers", half: 75.0},
+            "gobi chilli": {name: "Gobi Chilli", category: "Vegetarian Appetizers", half: 75.0},
+            "mirapa gobi": {name: "Mirapa Gobi", category: "Vegetarian Appetizers", half: 75.0},
+            "velluli gobi": {name: "Velluli Gobi", category: "Vegetarian Appetizers", half: 75.0},
+            "gobi 65": {name: "Gobi 65", category: "Vegetarian Appetizers", half: 75.0},
+            "pepper gobi": {name: "Pepper Gobi", category: "Vegetarian Appetizers", half: 75.0},
+            "paneer 65": {name: "Paneer 65", category: "Vegetarian Appetizers", half: 90.0},
+            "chilli paneer": {name: "Chilli Paneer", category: "Vegetarian Appetizers", half: 90.0},
+            "paneer manchurian": {name: "Paneer Manchurian", category: "Vegetarian Appetizers", half: 90.0},
+            "chicken pakoda": {name: "Chicken Pakoda", category: "Non-Vegetarian Appetizers", half: 80.0},
+            "chicken fry(bone)": {name: "Chicken Fry (Bone)", category: "Non-Vegetarian Appetizers", half: 80.0},
+            "chicken 65": {name: "Chicken 65", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "pepper chicken": {name: "Pepper Chicken", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "chicken manchuriya": {name: "Chicken Manchuriya", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "mirapa kodi": {name: "Mirapa Kodi", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "chilli chicken": {name: "Chilli Chicken", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "velluli karam kodi": {name: "Velluli Karam Kodi", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "curry leaf chicken": {name: "Curry Leaf Chicken", category: "Non-Vegetarian Appetizers", half: 90.0},
+            "mutton ghee roast": {name: "Mutton Ghee Roast", category: "Non-Vegetarian Appetizers", half: 160.0},
+            "mutton fry": {name: "Mutton Fry", category: "Non-Vegetarian Appetizers", half: 160.0},
+            "apollo fish": {name: "Apollo Fish", category: "Non-Vegetarian Appetizers", half: 140.0},
+            "fish pakoda": {name: "Fish Pakoda", category: "Non-Vegetarian Appetizers", half: 125.0},
+            "chilli fish": {name: "Chilli Fish", category: "Non-Vegetarian Appetizers", half: 140.0},
+            "nethili fry": {name: "Nethili Fry", category: "Non-Vegetarian Appetizers", half: 140.0},
+            "shrimp fry": {name: "Shrimp Fry", category: "Non-Vegetarian Appetizers", half: 140.0},
+            "chilli shrimp": {name: "Chilli Shrimp", category: "Non-Vegetarian Appetizers", half: 140.0},
+            "bhendi pakodi": {name: "Bhendi Pakodi", category: "Vegetarian Fry Specials", half: 80.0},
+            "tindora pakodi": {name: "Tindora Pakodi", category: "Vegetarian Fry Specials", half: 80.0},
+            "vankaya pakodi": {name: "Vankaya Pakodi", category: "Vegetarian Fry Specials", half: 80.0},
+            "bhendi fry": {name: "Bhendi Fry", category: "Vegetarian Fry Specials", half: 80.0},
+            "tindora fry": {name: "Tindora Fry", category: "Vegetarian Fry Specials", half: 80.0},
+            "potato fry": {name: "Potato Fry", category: "Vegetarian Fry Specials", half: 70.0},
+            "chamadumpa fry": {name: "Chamadumpa Fry", category: "Vegetarian Fry Specials", half: 80.0},
+            "banana fry": {name: "Banana Fry", category: "Vegetarian Fry Specials", half: 80.0},
+            "gutti vanakaya": {name: "Gutti Vanakaya", category: "Vegetarian Curries", half: 75.0},
+            "veg korma": {name: "Veg Korma", category: "Vegetarian Curries", half: 75.0},
+            "vankaya karam": {name: "Vankaya Karam", category: "Vegetarian Curries", half: 75.0},
+            "vankaya iguru": {name: "Vankaya Iguru", category: "Vegetarian Curries", half: 75.0},
+            "malai kofta": {name: "Malai Kofta", category: "Vegetarian Curries", half: 90.0},
+            "paneer butter masala": {name: "Paneer Butter Masala", category: "Vegetarian Curries", half: 90.0},
+            "kadai paneer": {name: "Kadai Paneer", category: "Vegetarian Curries", half: 90.0},
+            "chamadumpa pulusu": {name: "Chamadumpa Pulusu", category: "Vegetarian Curries", half: 75.0},
+            "cashew curry": {name: "Cashew Curry", category: "Vegetarian Curries", half: 90.0},
+            "shahi paneer": {name: "Shahi Paneer", category: "Vegetarian Curries", half: 90.0},
+            "bhendi masala": {name: "Bhendi Masala", category: "Vegetarian Curries", half: 80.0},
+            "tindora masala": {name: "Tindora Masala", category: "Vegetarian Curries", half: 80.0},
+            "beerakaya masala": {name: "Beerakaya Masala", category: "Vegetarian Curries", half: 75.0},
+            "beerakaya channa": {name: "Beerakaya Channa", category: "Vegetarian Curries", half: 75.0},
+            "cabbage kura": {name: "Cabbage Kura", category: "Vegetarian Curries", half: 70.0},
+            "aloo capsicum curry": {name: "Aloo Capsicum Curry", category: "Vegetarian Curries", half: 70.0},
+            "aloo masala curry": {name: "Aloo Masala Curry", category: "Vegetarian Curries", half: 70.0},
+            "dal(spinach/mango/tomato)": {name: "Dal (Spinach/Mango/Tomato)", category: "Vegetarian Curries", half: 65.0},
+            "sambar": {name: "Sambar", category: "Vegetarian Curries", half: 60.0},
+            "rasam": {name: "Rasam", category: "Vegetarian Curries", half: 60.0},
+            "egg curry": {name: "Egg Curry", category: "Non-Vegetarian Curries", half: 65.0},
+            "andhra chicken": {name: "Andhra Chicken", category: "Non-Vegetarian Curries", half: 80.0},
+            "hyderabad chicken": {name: "Hyderabad Chicken", category: "Non-Vegetarian Curries", half: 80.0},
+            "gongura chicken": {name: "Gongura Chicken", category: "Non-Vegetarian Curries", half: 80.0},
+            "methi chicken": {name: "Methi Chicken", category: "Non-Vegetarian Curries", half: 80.0},
+            "chicken korma": {name: "Chicken Korma", category: "Non-Vegetarian Curries", half: 80.0},
+            "chicken rogan gosh": {name: "Chicken Rogan Gosh", category: "Non-Vegetarian Curries", half: 80.0},
+            "kadai chicken": {name: "Kadai Chicken", category: "Non-Vegetarian Curries", half: 80.0},
+            "andhra mutton masala": {name: "Andhra Mutton Masala", category: "Non-Vegetarian Curries", half: 120.0},
+            "hyderabad mutton masala": {name: "Hyderabad Mutton Masala", category: "Non-Vegetarian Curries", half: 120.0},
+            "gongura mutton": {name: "Gongura Mutton", category: "Non-Vegetarian Curries", half: 120.0},
+            "mutton korma": {name: "Mutton Korma", category: "Non-Vegetarian Curries", half: 120.0},
+            "goat rogan gosh": {name: "Goat Rogan Gosh", category: "Non-Vegetarian Curries", half: 120.0},
+            "fish pulusu": {name: "Fish Pulusu", category: "Non-Vegetarian Curries", half: 110.0},
+            "shrimp masala": {name: "Shrimp Masala", category: "Non-Vegetarian Curries", half: 110.0},
+            "malabar shrimp": {name: "Malabar Shrimp", category: "Non-Vegetarian Curries", half: 110.0},
+            "white rice": {name: "White Rice", category: "Rice & Breakfast Specialties", half: 45.0},
+            "bhagara rice": {name: "Bhagara Rice", category: "Rice & Breakfast Specialties", half: 65.0},
+            "curd rice": {name: "Curd Rice", category: "Rice & Breakfast Specialties", half: 65.0},
+            "lemon rice": {name: "Lemon Rice", category: "Rice & Breakfast Specialties", half: 65.0},
+            "tamarind rice": {name: "Tamarind Rice", category: "Rice & Breakfast Specialties", half: 65.0},
+            "pongal rice": {name: "Pongal Rice", category: "Rice & Breakfast Specialties", half: 65.0},
+            "rava upma": {name: "Rava Upma", category: "Rice & Breakfast Specialties", half: 65.0},
+            "vermicelli upma": {name: "Vermicelli Upma", category: "Rice & Breakfast Specialties", half: 70.0},
+            "veg biryani/pulav": {name: "Veg Biryani/Pulav", category: "Biryanis", half: 70.0},
+            "gongura veg biryani": {name: "Gongura Veg Biryani", category: "Biryanis", half: 75.0},
+            "egg biryani/pulav": {name: "Egg Biryani/Pulav", category: "Biryanis", half: 75.0},
+            "chicken biryani/pulav": {name: "Chicken Biryani/Pulav", category: "Biryanis", half: 80.0},
+            "paneer biryani/pulav": {name: "Paneer Biryani/Pulav", category: "Biryanis", half: 80.0},
+            "karampodi paneer biryani": {name: "Karampodi Paneer Biryani", category: "Biryanis", half: 90.0},
+            "chicken 65 biryani/pulav": {name: "Chicken 65 Biryani/Pulav", category: "Biryanis", half: 95.0},
+            "gongura chicken biryani": {name: "Gongura Chicken Biryani", category: "Biryanis", half: 95.0},
+            "vijaywada sp. chicken biryani": {name: "Vijaywada Sp. Chicken Biryani", category: "Biryanis", half: 95.0},
+            "impossible biryani": {name: "Impossible Biryani", category: "Biryanis", half: 120.0},
+            "prawn biryani/pulav": {name: "Prawn Biryani/Pulav", category: "Biryanis", half: 125.0},
+            "apollo fish biryani/pulav": {name: "Apollo Fish Biryani/Pulav", category: "Biryanis", half: 125.0},
+            "goat biryani/pulav": {name: "Goat Biryani/Pulav", category: "Biryanis", half: 125.0},
+            "gongura goat biryani": {name: "Gongura Goat Biryani", category: "Biryanis", half: 140.0},
+            "gulab jamun": {name: "Gulab Jamun", category: "Desserts", half: 70.0},
+            "ras malai": {name: "Ras Malai", category: "Desserts", half: 90.0},
+            "double ka meetha": {name: "Double Ka Meetha", category: "Desserts", half: 75.0},
+            "apricot delight": {name: "Apricot Delight", category: "Desserts", half: 90.0}
+        };
+
+        // Naperville, DuPage County base sales tax configuration rate for prepared food (8.75%)
+        // Change to 0.0950 if inside the Downtown Naperville Special Tax District
+        const TAX_RATE = 0.0875; 
+
+        let quoteCart = [];
+        const searchInput = document.getElementById('search-input');
+        const suggestionsBox = document.getElementById('suggestions');
+        const menuDropdown = document.getElementById('menu-dropdown');
+
+        // Populate HTML Selector dynamically on launch sorting alphabetically by group
+        function initializeMenuOptions() {
+            const groups = {};
+            for (const key in MENU_DATA) {
+                const cat = MENU_DATA[key].category;
+                if (!groups[cat]) groups[cat] = [];
+                groups[cat].push({ id: key, ...MENU_DATA[key] });
+            }
+
+            for (const cat in groups) {
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = cat;
+                groups[cat].forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.innerText = `${item.name} (Half: $${item.half.toFixed(2)})`;
+                    optGroup.appendChild(opt);
+                });
+                menuDropdown.appendChild(optGroup);
+            }
+        }
+
+        // Dropdown tracking interface function
+        function handleDropdownSelect(itemId) {
+            if (!itemId) return;
+            const target = MENU_DATA[itemId];
+            addItemToQuote(itemId, target.name, target.half, target.half * 2, target.category);
+            menuDropdown.value = ""; // Reset index selector view
+        }
+
+        // Substring pattern logic lookup handler
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (query.length < 2) {
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+
+            const matches = [];
+            for (const key in MENU_DATA) {
+                const item = MENU_DATA[key];
+                if (key.includes(query) || item.category.toLowerCase().includes(query)) {
+                    matches.push({ id: key, ...item, full: item.half * 2 });
+                }
+            }
+
+            if (matches.length === 0) {
+                suggestionsBox.innerHTML = `<div class="p-4 text-sm text-slate-400">No dishes match context "${e.target.value}"</div>`;
+            } else {
+                suggestionsBox.innerHTML = matches.slice(0, 8).map(item => `
+                    <div onclick="addItemToQuote('${item.id}', '${item.name}', ${item.half}, ${item.full}, '${item.category}')" 
+                         class="p-3 border-b border-slate-50 hover:bg-slate-50 cursor-pointer flex justify-between items-center transition">
+                        <div>
+                            <p class="font-semibold text-slate-800 text-sm">${item.name}</p>
+                            <p class="text-[11px] text-slate-400 font-medium">${item.category}</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-500 font-mono">
+                            <span>H: $${item.half.toFixed(2)}</span><br>
+                            <span>F: $${item.full.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            suggestionsBox.classList.remove('hidden');
+        });
+
+        function addItemToQuote(id, name, halfPrice, fullPrice, category) {
+            suggestionsBox.classList.add('hidden');
+            searchInput.value = '';
+
+            quoteCart.push({
+                uniqueId: Date.now() + Math.random().toString(36).substr(2, 5),
+                id: id,
+                name: name,
+                category: category,
+                halfPrice: halfPrice,
+                fullPrice: fullPrice,
+                size: 'half', 
+                quantity: 1
+            });
+
+            renderQuote();
+        }
+
+        function updateItemSize(uniqueId, size) {
+            const item = quoteCart.find(i => i.uniqueId === uniqueId);
+            if (item) item.size = size;
+            renderQuote();
+        }
+
+        function updateItemQty(uniqueId, qty) {
+            const item = quoteCart.find(i => i.uniqueId === uniqueId);
+            if (item) item.quantity = Math.max(1, parseInt(qty) || 1);
+            renderQuote();
+        }
+
+        function removeItem(uniqueId) {
+            quoteCart = quoteCart.filter(i => i.uniqueId !== uniqueId);
+            renderQuote();
+        }
+
+        function renderQuote() {
+            const container = document.getElementById('quote-items-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            container.querySelectorAll('.quote-row').forEach(el => el.remove());
+
+            if (quoteCart.length === 0) {
+                emptyState.classList.remove('hidden');
+                updateSummary(0, 0);
+                return;
+            }
+            emptyState.classList.add('hidden');
+            
+            let totalAccumulator = 0;
+            let totalItemsCount = 0;
+
+            quoteCart.forEach(item => {
+                const unitPrice = item.size === 'half' ? item.halfPrice : item.fullPrice;
+                const rowTotal = unitPrice * item.quantity;
+                totalAccumulator += rowTotal;
+                totalItemsCount += item.quantity;
+
+                const rowHtml = document.createElement('div');
+                rowHtml.className = "quote-row flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white rounded-xl border border-slate-200 gap-4 transition-all hover:border-slate-300 shadow-xs";
+                rowHtml.innerHTML = `
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base">${item.name}</h4>
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">${item.category}</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <select onchange="updateItemSize('${item.uniqueId}', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-navy-light">
+                            <option value="half" ${item.size === 'half' ? 'selected' : ''}>Half Tray ($${item.halfPrice.toFixed(2)})</option>
+                            <option value="full" ${item.size === 'full' ? 'selected' : ''}>Full Tray ($${item.fullPrice.toFixed(2)})</option>
+                        </select>
+                        <div class="flex items-center space-x-1">
+                            <label class="text-xs text-slate-400 mr-1">Qty:</label>
+                            <input type="number" min="1" value="${item.quantity}" oninput="updateItemQty('${item.uniqueId}', this.value)" 
+                                   class="w-12 bg-slate-50 border border-slate-200 rounded-lg p-1 text-center text-xs font-bold focus:outline-none focus:ring-1 focus:ring-navy-light">
+                        </div>
+                        <span class="font-mono font-bold text-slate-700 min-w-[70px] text-right text-sm">$${rowTotal.toFixed(2)}</span>
+                        <button onclick="removeItem('${item.uniqueId}')" class="text-slate-300 hover:text-red-500 transition px-2 text-xl cursor-pointer">&times;</button>
+                    </div>
+                `;
+                container.appendChild(rowHtml);
+            });
+
+            updateSummary(totalItemsCount, totalAccumulator);
+        }
+
+        function updateSummary(count, subtotal) {
+            const taxAmount = subtotal * TAX_RATE;
+            const absoluteTotal = subtotal + taxAmount;
+
+            document.getElementById('summary-count').innerText = count;
+            document.getElementById('summary-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('summary-tax').innerText = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('summary-total').innerText = `$${absoluteTotal.toFixed(2)}`;
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.add('hidden');
+            }
+        });
+
+        // Fire initialization routines on load
+        window.onload = initializeMenuOptions;
+    </script>
+</body>
+</html>
